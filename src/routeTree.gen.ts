@@ -16,10 +16,17 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VerifyLazyRouteImport = createFileRoute('/verify')()
 const UsagesLazyRouteImport = createFileRoute('/usages')()
 const PercentagesLazyRouteImport = createFileRoute('/percentages')()
 const ForgotPasswordLazyRouteImport = createFileRoute('/forgotPassword')()
+const Change_passwordLazyRouteImport = createFileRoute('/change_password')()
 
+const VerifyLazyRoute = VerifyLazyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/verify.lazy').then((d) => d.Route))
 const UsagesLazyRoute = UsagesLazyRouteImport.update({
   id: '/usages',
   path: '/usages',
@@ -36,6 +43,13 @@ const ForgotPasswordLazyRoute = ForgotPasswordLazyRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./routes/forgotPassword.lazy').then((d) => d.Route),
+)
+const Change_passwordLazyRoute = Change_passwordLazyRouteImport.update({
+  id: '/change_password',
+  path: '/change_password',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() =>
+  import('./routes/change_password.lazy').then((d) => d.Route),
 )
 const TotalRoute = TotalRouteImport.update({
   id: '/total',
@@ -63,18 +77,22 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/total': typeof TotalRoute
+  '/change_password': typeof Change_passwordLazyRoute
   '/forgotPassword': typeof ForgotPasswordLazyRoute
   '/percentages': typeof PercentagesLazyRoute
   '/usages': typeof UsagesLazyRoute
+  '/verify': typeof VerifyLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/total': typeof TotalRoute
+  '/change_password': typeof Change_passwordLazyRoute
   '/forgotPassword': typeof ForgotPasswordLazyRoute
   '/percentages': typeof PercentagesLazyRoute
   '/usages': typeof UsagesLazyRoute
+  '/verify': typeof VerifyLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -82,9 +100,11 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/total': typeof TotalRoute
+  '/change_password': typeof Change_passwordLazyRoute
   '/forgotPassword': typeof ForgotPasswordLazyRoute
   '/percentages': typeof PercentagesLazyRoute
   '/usages': typeof UsagesLazyRoute
+  '/verify': typeof VerifyLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -93,27 +113,33 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/total'
+    | '/change_password'
     | '/forgotPassword'
     | '/percentages'
     | '/usages'
+    | '/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/signup'
     | '/total'
+    | '/change_password'
     | '/forgotPassword'
     | '/percentages'
     | '/usages'
+    | '/verify'
   id:
     | '__root__'
     | '/'
     | '/login'
     | '/signup'
     | '/total'
+    | '/change_password'
     | '/forgotPassword'
     | '/percentages'
     | '/usages'
+    | '/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -121,13 +147,22 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   TotalRoute: typeof TotalRoute
+  Change_passwordLazyRoute: typeof Change_passwordLazyRoute
   ForgotPasswordLazyRoute: typeof ForgotPasswordLazyRoute
   PercentagesLazyRoute: typeof PercentagesLazyRoute
   UsagesLazyRoute: typeof UsagesLazyRoute
+  VerifyLazyRoute: typeof VerifyLazyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/usages': {
       id: '/usages'
       path: '/usages'
@@ -147,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/forgotPassword'
       fullPath: '/forgotPassword'
       preLoaderRoute: typeof ForgotPasswordLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/change_password': {
+      id: '/change_password'
+      path: '/change_password'
+      fullPath: '/change_password'
+      preLoaderRoute: typeof Change_passwordLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/total': {
@@ -185,9 +227,11 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   TotalRoute: TotalRoute,
+  Change_passwordLazyRoute: Change_passwordLazyRoute,
   ForgotPasswordLazyRoute: ForgotPasswordLazyRoute,
   PercentagesLazyRoute: PercentagesLazyRoute,
   UsagesLazyRoute: UsagesLazyRoute,
+  VerifyLazyRoute: VerifyLazyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
