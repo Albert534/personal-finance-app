@@ -1,6 +1,6 @@
 // src/routes/__root.tsx
 import { createRootRoute, Outlet, redirect } from '@tanstack/react-router';
-
+import ScrollToTop from '../utils/ScrollToTop';
 import { Link } from '@tanstack/react-router';
 import { Button, Drawer } from '@mantine/core';
 import { useEffect, useState } from 'react';
@@ -45,6 +45,7 @@ function RootComponent() {
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
+	useEffect(() => {}, []);
 
 	// If not authenticated, just show auth routes (login/signup will be rendered by Outlet)
 	if (!isAuthenticated) {
@@ -82,10 +83,10 @@ function RootComponent() {
 								Percentages
 							</Link>
 							<Link
-								to='/usages'
+								to='/expenses'
 								className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium'
 							>
-								Usages
+								Expenses
 							</Link>
 							<Link
 								to='/total'
@@ -159,7 +160,7 @@ function RootComponent() {
 									Percentages
 								</Link>
 								<Link
-									to='/usages'
+									to='/expenses'
 									onClick={() => setOpen(false)}
 									className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md font-medium'
 								>
@@ -178,10 +179,12 @@ function RootComponent() {
 				)}
 
 				{/* Main content area - with left margin to account for fixed sidebar */}
-				<div className='flex-1 md:ml-[240px] min-h-screen mt-6'>
+				<div className='flex-1 md:ml-[240px]  mt-6'>
 					{/* Mobile top spacing to account for floating menu button */}
-					<div className='pt-16 md:pt-0 p-4 md:p-6'>
-						<Outlet />
+					<div className='px-4 sm:px-6 lg:px-8 pb-5 pt-1'>
+						<ScrollToTop>
+							<Outlet />
+						</ScrollToTop>
 					</div>
 				</div>
 			</div>

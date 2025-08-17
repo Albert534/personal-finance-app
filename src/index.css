@@ -22,6 +22,19 @@
 	--color-card3: var(--card3);
 	--color-card4: var(--card4);
 }
+
+@layer components {
+	.title {
+		@apply text-2xl font-semibold text-textBlack;
+	}
+	.card {
+		@apply bg-card rounded-md p-5 pt-2;
+	}
+	.input {
+		@apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-secondary;
+	}
+}
+
 html,
 body,
 #root {

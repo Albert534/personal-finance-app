@@ -1,12 +1,11 @@
-import React from 'react';
 import { LineChart } from '@mantine/charts';
-import { data } from '../utils/dummyIncome';
+import { data } from '../../utils/dummyIncome';
 import { BsCoin, BsHandbag } from 'react-icons/bs';
 import { IconCurrencyDollarOff } from '@tabler/icons-react';
-import { Text } from '@mantine/core';
+
 import { DonutChart } from '@mantine/charts';
-import { dataPieChart } from '../utils/dummyPieChartData';
-import cn from '../utils/cn';
+import { dataPieChart } from '../../utils/dummyPieChartData';
+import cn from '../../utils/cn';
 
 const Dashboard = () => {
 	console.log(dataPieChart);
@@ -27,7 +26,7 @@ const Dashboard = () => {
 	];
 
 	// Clean status color function
-	const getStatusColor = (title, value) => {
+	const getStatusColor = (title: string, value: string) => {
 		if (value === 'Active' || title === 'Total Balance') {
 			return 'text-green-600';
 		}
@@ -38,7 +37,7 @@ const Dashboard = () => {
 	};
 
 	return (
-		<div className='px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto'>
+		<div className=' max-w-8xl mx-auto'>
 			{/* Welcome header */}
 			<div className='text-lg sm:text-xl lg:text-2xl font-medium mb-6 sm:mb-8'>
 				Welcome Aung Paing Oo
@@ -203,7 +202,7 @@ const Dashboard = () => {
 				{/* Empty sections - hidden on mobile/tablet, visible on large screens */}
 				<div className='  lg:col-span-5 xl:col-span-5'>
 					{/* Future content placeholder */}
-					<div className='bg-card p-5 pt-1 rounded-2xl h-full flex flex-col items-center justify-center'>
+					<div className='bg-card p-5 pt-1 rounded-2xl h-full flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 ease-in-out cursor-pointer hover:bg-card/90 hover:translate-y-[-5px]'>
 						<DonutChart
 							data={dataPieChart}
 							w='100%'
@@ -249,20 +248,20 @@ const Dashboard = () => {
 
 				<div className='  lg:col-span-3 xl:col-span-3'>
 					{/* Future content placeholder */}
-					<div className='bg-card p-5 rounded-2xl h-full flex flex-col '>
+					<div className='bg-card p-5 rounded-2xl h-full flex flex-col  '>
 						<div className='text-2xl font-semibold'>Quick Access</div>
 						<div className='mt-7 cursor-pointer hover:text-blue-500 transiton-all duration 300 ease-in-out'>
 							<span className='w-2 h-2 rounded-full bg-black inline-block mb-0.5 mr-1'>
 								{' '}
 							</span>{' '}
-							Define New Rule (Percentages)
+							Define New Rule
 						</div>
 
 						<div className='mt-4 cursor-pointer hover:text-blue-500 transiton-all duration 300 ease-in-out'>
 							<span className='w-2 h-2 rounded-full bg-black inline-block mb-0.5 mr-1 '>
 								{' '}
 							</span>{' '}
-							Add Extra Expanses
+							Add Extra Expenses
 						</div>
 
 						<div className='mt-4 cursor-pointer hover:text-blue-500 transiton-all duration 300 ease-in-out'>

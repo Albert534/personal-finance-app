@@ -15,10 +15,12 @@ import { Route as TotalRouteImport } from './routes/total'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PercentagesIndexRouteImport } from './routes/percentages/index'
+import { Route as ExpensesIndexRouteImport } from './routes/expenses/index'
+import { Route as PercentagesAddRulesRouteImport } from './routes/percentages/addRules'
+import { Route as ExpensesAddExpensesRouteImport } from './routes/expenses/addExpenses'
 
 const VerifyLazyRouteImport = createFileRoute('/verify')()
-const UsagesLazyRouteImport = createFileRoute('/usages')()
-const PercentagesLazyRouteImport = createFileRoute('/percentages')()
 const ForgotPasswordLazyRouteImport = createFileRoute('/forgotPassword')()
 const Change_passwordLazyRouteImport = createFileRoute('/change_password')()
 
@@ -27,16 +29,6 @@ const VerifyLazyRoute = VerifyLazyRouteImport.update({
   path: '/verify',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/verify.lazy').then((d) => d.Route))
-const UsagesLazyRoute = UsagesLazyRouteImport.update({
-  id: '/usages',
-  path: '/usages',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/usages.lazy').then((d) => d.Route))
-const PercentagesLazyRoute = PercentagesLazyRouteImport.update({
-  id: '/percentages',
-  path: '/percentages',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/percentages.lazy').then((d) => d.Route))
 const ForgotPasswordLazyRoute = ForgotPasswordLazyRouteImport.update({
   id: '/forgotPassword',
   path: '/forgotPassword',
@@ -71,6 +63,26 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PercentagesIndexRoute = PercentagesIndexRouteImport.update({
+  id: '/percentages/',
+  path: '/percentages/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesIndexRoute = ExpensesIndexRouteImport.update({
+  id: '/expenses/',
+  path: '/expenses/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PercentagesAddRulesRoute = PercentagesAddRulesRouteImport.update({
+  id: '/percentages/addRules',
+  path: '/percentages/addRules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesAddExpensesRoute = ExpensesAddExpensesRouteImport.update({
+  id: '/expenses/addExpenses',
+  path: '/expenses/addExpenses',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -79,9 +91,11 @@ export interface FileRoutesByFullPath {
   '/total': typeof TotalRoute
   '/change_password': typeof Change_passwordLazyRoute
   '/forgotPassword': typeof ForgotPasswordLazyRoute
-  '/percentages': typeof PercentagesLazyRoute
-  '/usages': typeof UsagesLazyRoute
   '/verify': typeof VerifyLazyRoute
+  '/expenses/addExpenses': typeof ExpensesAddExpensesRoute
+  '/percentages/addRules': typeof PercentagesAddRulesRoute
+  '/expenses': typeof ExpensesIndexRoute
+  '/percentages': typeof PercentagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -90,9 +104,11 @@ export interface FileRoutesByTo {
   '/total': typeof TotalRoute
   '/change_password': typeof Change_passwordLazyRoute
   '/forgotPassword': typeof ForgotPasswordLazyRoute
-  '/percentages': typeof PercentagesLazyRoute
-  '/usages': typeof UsagesLazyRoute
   '/verify': typeof VerifyLazyRoute
+  '/expenses/addExpenses': typeof ExpensesAddExpensesRoute
+  '/percentages/addRules': typeof PercentagesAddRulesRoute
+  '/expenses': typeof ExpensesIndexRoute
+  '/percentages': typeof PercentagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -102,9 +118,11 @@ export interface FileRoutesById {
   '/total': typeof TotalRoute
   '/change_password': typeof Change_passwordLazyRoute
   '/forgotPassword': typeof ForgotPasswordLazyRoute
-  '/percentages': typeof PercentagesLazyRoute
-  '/usages': typeof UsagesLazyRoute
   '/verify': typeof VerifyLazyRoute
+  '/expenses/addExpenses': typeof ExpensesAddExpensesRoute
+  '/percentages/addRules': typeof PercentagesAddRulesRoute
+  '/expenses/': typeof ExpensesIndexRoute
+  '/percentages/': typeof PercentagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -115,9 +133,11 @@ export interface FileRouteTypes {
     | '/total'
     | '/change_password'
     | '/forgotPassword'
-    | '/percentages'
-    | '/usages'
     | '/verify'
+    | '/expenses/addExpenses'
+    | '/percentages/addRules'
+    | '/expenses'
+    | '/percentages'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -126,9 +146,11 @@ export interface FileRouteTypes {
     | '/total'
     | '/change_password'
     | '/forgotPassword'
-    | '/percentages'
-    | '/usages'
     | '/verify'
+    | '/expenses/addExpenses'
+    | '/percentages/addRules'
+    | '/expenses'
+    | '/percentages'
   id:
     | '__root__'
     | '/'
@@ -137,9 +159,11 @@ export interface FileRouteTypes {
     | '/total'
     | '/change_password'
     | '/forgotPassword'
-    | '/percentages'
-    | '/usages'
     | '/verify'
+    | '/expenses/addExpenses'
+    | '/percentages/addRules'
+    | '/expenses/'
+    | '/percentages/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -149,9 +173,11 @@ export interface RootRouteChildren {
   TotalRoute: typeof TotalRoute
   Change_passwordLazyRoute: typeof Change_passwordLazyRoute
   ForgotPasswordLazyRoute: typeof ForgotPasswordLazyRoute
-  PercentagesLazyRoute: typeof PercentagesLazyRoute
-  UsagesLazyRoute: typeof UsagesLazyRoute
   VerifyLazyRoute: typeof VerifyLazyRoute
+  ExpensesAddExpensesRoute: typeof ExpensesAddExpensesRoute
+  PercentagesAddRulesRoute: typeof PercentagesAddRulesRoute
+  ExpensesIndexRoute: typeof ExpensesIndexRoute
+  PercentagesIndexRoute: typeof PercentagesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -161,20 +187,6 @@ declare module '@tanstack/react-router' {
       path: '/verify'
       fullPath: '/verify'
       preLoaderRoute: typeof VerifyLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/usages': {
-      id: '/usages'
-      path: '/usages'
-      fullPath: '/usages'
-      preLoaderRoute: typeof UsagesLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/percentages': {
-      id: '/percentages'
-      path: '/percentages'
-      fullPath: '/percentages'
-      preLoaderRoute: typeof PercentagesLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgotPassword': {
@@ -219,6 +231,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/percentages/': {
+      id: '/percentages/'
+      path: '/percentages'
+      fullPath: '/percentages'
+      preLoaderRoute: typeof PercentagesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses/': {
+      id: '/expenses/'
+      path: '/expenses'
+      fullPath: '/expenses'
+      preLoaderRoute: typeof ExpensesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/percentages/addRules': {
+      id: '/percentages/addRules'
+      path: '/percentages/addRules'
+      fullPath: '/percentages/addRules'
+      preLoaderRoute: typeof PercentagesAddRulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses/addExpenses': {
+      id: '/expenses/addExpenses'
+      path: '/expenses/addExpenses'
+      fullPath: '/expenses/addExpenses'
+      preLoaderRoute: typeof ExpensesAddExpensesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -229,9 +269,11 @@ const rootRouteChildren: RootRouteChildren = {
   TotalRoute: TotalRoute,
   Change_passwordLazyRoute: Change_passwordLazyRoute,
   ForgotPasswordLazyRoute: ForgotPasswordLazyRoute,
-  PercentagesLazyRoute: PercentagesLazyRoute,
-  UsagesLazyRoute: UsagesLazyRoute,
   VerifyLazyRoute: VerifyLazyRoute,
+  ExpensesAddExpensesRoute: ExpensesAddExpensesRoute,
+  PercentagesAddRulesRoute: PercentagesAddRulesRoute,
+  ExpensesIndexRoute: ExpensesIndexRoute,
+  PercentagesIndexRoute: PercentagesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
