@@ -60,7 +60,7 @@ const Login = () => {
 						</div>
 
 						<div className='flex items-center justify-center'>
-							<Link >
+							<Link to='/'>
 							<Button
 								type='submit'
 								mt='25px'

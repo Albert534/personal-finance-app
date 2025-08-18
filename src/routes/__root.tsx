@@ -5,7 +5,7 @@ import { Link } from '@tanstack/react-router'
 
 export const Route = createRootRoute({
   beforeLoad: ({ location }) => {
-    const isAuthenticated = false // Replace with your actual auth check
+    const isAuthenticated = true // Replace with your actual auth check
     const unprotected = ['/login', '/signup' , '/forgotPassword' , '/change_password' , '/verify']
     
     // Redirect unauthenticated users to login (except for auth pages)
@@ -27,7 +27,7 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
-  const isAuthenticated = false // Must match the value in beforeLoad
+  const isAuthenticated = true // Must match the value in beforeLoad
   
   // If not authenticated, just show auth routes (login/signup will be rendered by Outlet)
   if (!isAuthenticated) {
