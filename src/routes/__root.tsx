@@ -9,7 +9,7 @@ import { BsArrowLeft} from 'react-icons/bs';
 
 export const Route = createRootRoute({
 	beforeLoad: ({ location }) => {
-		const isAuthenticated = true; // Replace with your actual auth check
+		const isAuthenticated = false; // Replace with your actual auth check
 		const unprotected = [
 			'/login',
 			'/signup',
@@ -37,7 +37,7 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-	const isAuthenticated = true; // Must match the value in beforeLoad
+	const isAuthenticated = false; // Must match the value in beforeLoad
 	const [open, setOpen] = useState(false);
 	const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 

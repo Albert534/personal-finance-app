@@ -1,24 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from '@mantine/form';
-import { TextInput, Button } from '@mantine/core';
+import { TextInput, Button, Loader } from '@mantine/core';
 import { Link } from '@tanstack/react-router';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { useState } from 'react';
+import { useSignUp } from '../apis/mutation/signupMutation';
+import { useRouter } from '@tanstack/react-router';
 const Signup = () => {
+	const router = useRouter()
 	const [isEyeOpen, setIsEyeOpen] = useState(false);
 	const [isConfrimOpen, setIsConrfirmOpen] = useState(false);
+	const {mutate: signUp , isPending , isSuccess
+	}  = useSignUp();
 	const form = useForm({
 		mode: 'uncontrolled',
 		initialValues: {
 			password: '',
 			email: '',
-			username: '',
+			name: '',
 			confirmPassword: '',
 		},
 
 		// Validation functions for each field
 		validate: {
-			username: (value) =>
+			name: (value) =>
 				value.length <= 3 ? 'Username should have at least 3 letters' : null,
 			password: (value) =>
 				value.length < 6 ? 'Password should have at least 6 letters' : null,
@@ -27,6 +32,23 @@ const Signup = () => {
 				value !== form.values.password ? 'Passwords do not match' : null,
 		},
 	});
+	
+const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault(); // prevent refresh
+
+  form.onSubmit((values) => {
+    console.log(values);
+    signUp(values);
+  })(); // ✅ call the returned function immediately
+};
+
+useEffect(() => {
+	if(isSuccess){
+	router.navigate({ to: '/login' }); // ✅ type-safe
+	}
+		
+}, [isSuccess])
+
 
 	return (
 		<div className='min-h-screen flex items-center justify-center font-text-display'>
@@ -38,20 +60,20 @@ const Signup = () => {
 				</div>
 
 				<div className='mt-4'>
-					<form onSubmit={form.onSubmit(console.log)}>
+					<form onSubmit={handleSubmit}>
 						<TextInput
 							mt='sm'
 							label='Username'
 							placeholder='Username'
-							key={form.key('username')}
-							{...form.getInputProps('username')}
+							key={form.key('name')}
+							{...form.getInputProps('name')}
 						/>
 						<TextInput
 							mt='sm'
 							label='Email'
 							placeholder='email'
 							key={form.key('email')}
-							{...form.getInputProps('username')}
+							{...form.getInputProps('email')}
 						/>
 						<TextInput
 							label='Password'
@@ -74,6 +96,7 @@ const Signup = () => {
 
 						<TextInput
 							label='Confirm Password'
+							type={isConfrimOpen ? 'text' : 'password'}
 							rightSection={
 								<div
 									className='cursor-pointer'
@@ -102,16 +125,20 @@ const Signup = () => {
 								</div>
 							</Link>
 						</div>
+						<div className='flex items-center justify-center mt-6'>
+  <Button
+    type='submit'
+    className='!bg-secondary hover:!bg-secondary/50 transition-all duration-200 ease-in-out flex items-center justify-center'
+    disabled={isPending} // disable button while loading
+  >
+    {isPending ? (
+      <Loader color="#f5e6d3" size={15} className='mr-2'  />
+    ) : null}
+    SignUp
+  </Button>
+</div>
 
-						<div className='flex items-center justify-center'>
-							<Button
-								type='submit'
-								mt='25px'
-								className='!bg-secondary hover:!bg-secondary/50 transition-all duration-200 ease-in-out'
-							>
-								Login
-							</Button>
-						</div>
+						
 					</form>
 				</div>
 			</div>
