@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextInput, Button } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { Link } from '@tanstack/react-router';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import { useLogin } from '../apis/mutation/loginMutaiton';
+import { Loader } from '@mantine/core';
+import { useAuthenticationStore } from '../store/authenticationStore';
+import { useRouter } from '@tanstack/react-router';
 const Login = () => {
+	const router = useRouter();
+	const {setAuthenticated} = useAuthenticationStore();
 	const [isEyeOpen, setIsEyeOpen] = useState(false);
+	const {mutate : login , isPending , isSuccess} = useLogin(); 
+	
 	const form = useForm({
 		mode: 'uncontrolled',
 		initialValues: { password: '', email: '' },
@@ -16,6 +24,20 @@ const Login = () => {
 			email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
 		},
 	});
+	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	event.preventDefault();
+	form.onSubmit((values) => {
+		login(values);
+	})();
+};
+
+useEffect(() => {
+	if(isSuccess){
+		localStorage.setItem('logged', 'true');
+		router.navigate({to: '/'});
+	}
+}, [isSuccess]);
+
 
 	return (
 		<div className='min-h-screen flex items-center justify-center font-text-display'>
@@ -26,7 +48,7 @@ const Login = () => {
 					</h1>
 				</div>
 				<div className='mt-5'>
-					<form onSubmit={form.onSubmit(console.log)}>
+					<form onSubmit={handleSubmit}>
 						<TextInput
 							mt='sm'
 							label='Email'
@@ -66,16 +88,19 @@ const Login = () => {
 							</Link>
 						</div>
 
-						<div className='flex items-center justify-center'>
-							<Link>
-								<Button
+						<div className='flex items-center justify-center mt-6'>
+							
+								 <Button
 									type='submit'
-									mt='25px'
-									className=' !bg-secondary hover:!bg-secondary/50 transition-all duration-200 ease-in-out'
-								>
+									className='!bg-secondary hover:!bg-secondary/50 transition-all duration-200 ease-in-out flex items-center justify-center'
+									disabled={isPending} // disable button while loading
+								  >
+									{isPending ? (
+									  <Loader color="#f5e6d3" size={15} className='mr-2'  />
+									) : null}
 									Login
-								</Button>
-							</Link>
+								  </Button>
+							
 						</div>
 					</form>
 				</div>

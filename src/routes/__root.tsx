@@ -7,9 +7,22 @@ import { useEffect, useState } from 'react';
 import { IconMenu2 } from '@tabler/icons-react';
 import { BsArrowLeft} from 'react-icons/bs';
 
+
 export const Route = createRootRoute({
+	
+
 	beforeLoad: ({ location }) => {
-		const isAuthenticated = false; // Replace with your actual auth check
+		let isAuthenticated ;
+		const islocal = localStorage.getItem('logged');
+		if(islocal === 'true'){
+			isAuthenticated = true;
+			
+		}
+		else {
+			isAuthenticated = false;
+		}
+		
+		 // Replace with your actual auth check
 		const unprotected = [
 			'/login',
 			'/signup',
@@ -37,7 +50,16 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-	const isAuthenticated = false; // Must match the value in beforeLoad
+let isAuthenticated ;
+		const islocal = localStorage.getItem('logged');
+		if(islocal === 'true'){
+			isAuthenticated = true;
+			
+		}
+		else {
+			isAuthenticated = false;
+		}
+		console.log('isAuthenticated', isAuthenticated);
 	const [open, setOpen] = useState(false);
 	const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
