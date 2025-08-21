@@ -9,10 +9,11 @@ import { useAuthenticationStore } from '../store/authenticationStore';
 import { useRouter } from '@tanstack/react-router';
 const Login = () => {
 	const router = useRouter();
-	const {setAuthenticated} = useAuthenticationStore();
+	const {setAuthenticated , authenticated} = useAuthenticationStore();
+console.log(authenticated);
 	const [isEyeOpen, setIsEyeOpen] = useState(false);
-	const {mutate : login , isPending , isSuccess} = useLogin(); 
-	
+	const {mutate : login , isPending , isSuccess , data} = useLogin(); 
+	console.log(data);
 	const form = useForm({
 		mode: 'uncontrolled',
 		initialValues: { password: '', email: '' },
@@ -33,10 +34,12 @@ const Login = () => {
 
 useEffect(() => {
 	if(isSuccess){
-		localStorage.setItem('logged', 'true');
+		setAuthenticated(true);
+		document.cookie = `accessToken=${data?.tokens.accessToken}; Path=/;`;
+document.cookie = `refreshToken=${data?.tokens.refreshToken}; Path=/;`;
 		router.navigate({to: '/'});
 	}
-}, [isSuccess]);
+}, [ isSuccess, router, setAuthenticated]);
 
 
 	return (

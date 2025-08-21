@@ -13,3 +13,12 @@ export const authEndPoints = {
     login: `/auth/login`,
     signup: '/auth/signup',
 }
+
+export const forgetPasswordEndPoints = { 
+    forgetPassword: '/forgetPassword',
+    changePassword: "/changePassword",
+    verify: "/verifyCode"
+
+    
+
+}

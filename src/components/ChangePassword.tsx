@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect  , useState} from 'react';
+import { BsEyeSlash, BsEye } from 'react-icons/bs';
 import { useForm } from '@mantine/form';
 import { TextInput, Button } from '@mantine/core';
-import { Link } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
+import { useChangePasswordMutation } from '../apis/mutation/forgetPasswordMutation';
 const ChangePassword = () => {
+	const router = useRouter();
+	const [isEyeOpen, setIsEyeOpen] = useState(false);
+	const [isEyeOpen2, setIsEyeOpen2] = useState(false);
+
+	const {mutate: changePassword , isPending , isSuccess} = useChangePasswordMutation();
 	const form = useForm({
 		initialValues: {
 			password: '',
@@ -15,6 +22,26 @@ const ChangePassword = () => {
 				value !== form.values.password ? 'Passwords do not match' : null,
 		},
 	});
+
+
+	const handleChangePassword = (event: React.FormEvent<HTMLFormElement>) => {
+		const verified_email = localStorage.getItem('verifiedEmail');
+		event.preventDefault();
+		form.onSubmit((values) => {
+			console.log(values);
+			changePassword({password: values.password , verified_email} );
+		})();
+	}
+
+	useEffect(() => {
+
+		if(isSuccess){
+			router.navigate({to: '/login'});
+			localStorage.removeItem('verified_email');
+
+		}
+		
+	}, [isSuccess, router])
 	return (
 		<>
 			<div className='min-h-screen flex items-center justify-center font-text-display'>
@@ -23,11 +50,23 @@ const ChangePassword = () => {
 						Change Password
 					</div>
 
-					<form onSubmit={form.onSubmit(console.log)}>
+					<form onSubmit={handleChangePassword}>
 						<div className='mt-6'>
 							<TextInput
 								mt='md'
 								label='New Password'
+								type={isEyeOpen ? 'text' : 'password'}
+								rightSection={
+																isEyeOpen ?
+																	<BsEye
+																		onClick={() => setIsEyeOpen(false)}
+																		className='text-black cursor-pointer'
+																	/>
+																:	<BsEyeSlash
+																		onClick={() => setIsEyeOpen(true)}
+																		className='text-black cursor-pointer'
+																	/>
+															}
 								placeholder='Enter your new password'
 								style={{ width: '300px' }} // increase width here
 								{...form.getInputProps('password')}
@@ -35,6 +74,18 @@ const ChangePassword = () => {
 
 							<TextInput
 								mt='md'
+								type={isEyeOpen2 ? 'text' : 'password'}
+								rightSection={
+																isEyeOpen2 ?
+																	<BsEye
+																		onClick={() => setIsEyeOpen2(false)}
+																		className='text-black cursor-pointer'
+																	/>
+																:	<BsEyeSlash
+																		onClick={() => setIsEyeOpen2(true)}
+																		className='text-black cursor-pointer'
+																	/>
+															}
 								label='Confirm Password'
 								placeholder='Confirm your new password'
 								style={{ width: '300px' }} // increase width here
@@ -43,7 +94,7 @@ const ChangePassword = () => {
 						</div>
 
 						<div className=' mt-2 flex justify-center items-center'>
-							<Link to={'/verify'}>
+							
 								<Button
 									type='submit'
 									mt='md'
@@ -51,7 +102,7 @@ const ChangePassword = () => {
 								>
 									Change Password
 								</Button>
-							</Link>
+							
 						</div>
 					</form>
 				</div>

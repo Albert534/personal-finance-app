@@ -1,241 +1,204 @@
-// src/routes/__root.tsx
-import { createRootRoute, Outlet, redirect } from '@tanstack/react-router';
+import { createRootRoute, Outlet } from '@tanstack/react-router';
 import ScrollToTop from '../utils/ScrollToTop';
-import { Link } from '@tanstack/react-router';
-import { Button, Drawer } from '@mantine/core';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { Button, Drawer, Loader } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { IconMenu2 } from '@tabler/icons-react';
-import { BsArrowLeft} from 'react-icons/bs';
-
+import { BsArrowLeft } from 'react-icons/bs';
+import { useAuthenticationStore } from '../store/authenticationStore';
 
 export const Route = createRootRoute({
-	
-
-	beforeLoad: ({ location }) => {
-		let isAuthenticated ;
-		const islocal = localStorage.getItem('logged');
-		if(islocal === 'true'){
-			isAuthenticated = true;
-			
-		}
-		else {
-			isAuthenticated = false;
-		}
-		
-		 // Replace with your actual auth check
-		const unprotected = [
-			'/login',
-			'/signup',
-			'/forgotPassword',
-			'/change_password',
-			'/verify',
-		];
-
-		// Redirect unauthenticated users to login (except for auth pages)
-		if (!isAuthenticated && !unprotected.includes(location.pathname)) {
-			throw redirect({
-				to: '/login',
-				search: { redirect: location.pathname },
-			});
-		}
-
-		// Redirect authenticated users away from auth pages to dashboard
-		if (isAuthenticated && unprotected.includes(location.pathname)) {
-			throw redirect({
-				to: '/',
-			});
-		}
-	},
-	component: RootComponent,
+  component: RootComponent,
 });
 
 function RootComponent() {
-let isAuthenticated ;
-		const islocal = localStorage.getItem('logged');
-		if(islocal === 'true'){
-			isAuthenticated = true;
-			
-		}
-		else {
-			isAuthenticated = false;
-		}
-		console.log('isAuthenticated', isAuthenticated);
-	const [open, setOpen] = useState(false);
-	const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
+  const navigate = useNavigate();
+  const isAuthenticated = useAuthenticationStore((state) => state.authenticated);
 
-	useEffect(() => {
-		const handleResize = () => setIsSmallScreen(window.innerWidth < 768);
-		window.addEventListener('resize', handleResize);
-		return () => window.removeEventListener('resize', handleResize);
-	}, []);
-	useEffect(() => {}, []);
+  // NEW: splash loading state
+  const [loadingAfterLogin, setLoadingAfterLogin] = useState(false);
 
-	// If not authenticated, just show auth routes (login/signup will be rendered by Outlet)
-	if (!isAuthenticated) {
-		return <Outlet />;
-	}
+  // Trigger 3s loading only when user just logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      setLoadingAfterLogin(true);
+      const timer = setTimeout(() => setLoadingAfterLogin(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated]);
 
-	console.log(isSmallScreen);
+  // Redirect unauthenticated users
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate({ to: "/login" });
+    }
+  }, [isAuthenticated, navigate]);
 
-	// Authenticated dashboard layout
-	return (
-		<>
-			<div className='flex min-h-screen'>
-				{/* Fixed Sidebar for larger screens */}
-				<div className='hidden md:flex flex-col fixed top-0 left-0 h-screen w-[240px] bg-secondary border-r border-gray-200 z-30'>
-					{/* Sidebar header */}
-					<div className='p-4 border-b border-gray-300/20'>
-						<div className='text-2xl text-text font-semibold text-white'>
-							My Finance App
-						</div>
-					</div>
+  const [open, setOpen] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
-					{/* Sidebar navigation - scrollable if needed */}
-					<div className='flex-1 overflow-y-auto p-4'>
-						<nav className='flex flex-col gap-3'>
-							<Link
-								to='/'
-								className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium'
-							>
-								Dashboard
-							</Link>
-              		<Link
-									to='/job-information'
-									onClick={() => setOpen(false)}
-									className='text-white [&.active]:bg-primary  [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md font-medium'
-								>
-									Job Information
-								</Link>
-							<Link
-								to='/percentages'
-								className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium'
-							>
-								Percentages
-							</Link>
-							<Link
-								to='/expenses'
-								className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium'
-							>
-								Expenses
-							</Link>
-							<Link
-								to='/total'
-								className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium'
-							>
-								Total
-							</Link>
-						</nav>
-            
-					</div>
-          <div className='p-4 text-white font-medium' onClick={() => console.log('Logout')}>
-    <span className='flex gap-2 hover:text-red-500 cursor-pointer'><div className='mt-0.5'><BsArrowLeft/></div>Log Out</span>
-  </div>
-				</div>
+  // Handle screen resize
+  useEffect(() => {
+    const handleResize = () => setIsSmallScreen(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-				{/* Mobile menu button and drawer */}
-				{isSmallScreen && (
-					<>
-						<div className='fixed top-4 left-4 z-50 md:hidden'>
-							<Button
-								onClick={() => {
-									setOpen(true);
-								}}
-								className='!w-fit !p-2 !bg-secondary hover:!bg-secondary/50 transition-all duration-200 shadow-lg'
-							>
-								<IconMenu2 />
-							</Button>
-						</div>
+  // Handle protected routes
+  useEffect(() => {
+    const unprotected = [
+      '/login',
+      '/signup',
+      '/forgotPassword',
+      '/change_password',
+      '/verify',
+    ];
 
-						<Drawer
-							offset={6}
-							radius='none'
-							position='left'
-							opened={open}
-							onClose={() => {
-								setOpen(false);
-							}}
-							size='280px'
-							styles={{
-								content: {
-									backgroundColor: '#513f32',
-								},
-								header: {
-									backgroundColor: '#513f32',
-									color: 'white',
-									fontSize: 30,
-								},
-								title: {
-									color: 'white',
-									fontSize: 28,
-									fontWeight: 600,
-								},
-								close: {
-									color: 'white',
-									backgroundColor: 'inherit',
-									pointerEvents: 'auto',
-									marginTop: 5,
-								},
-							}}
-							title='My Finance App'
-						>
-							<div className='mt-5 flex flex-col gap-4 text-white/90'>
-								<Link
-									to='/'
-									onClick={() => setOpen(false)}
-									className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md font-medium'
-								>
-									Dashboard
-								</Link>
+    const currentPath = window.location.pathname;
 
+    if (!isAuthenticated && !unprotected.includes(currentPath)) {
+      navigate({ to: '/login', search: { redirect: currentPath } });
+    }
 
-                	<Link
-									to='/job-information'
-									onClick={() => setOpen(false)}
-									className='[&.active]:bg-primary  [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md font-medium'
-								>
-									Job
-								</Link>
-								<Link
-									to='/percentages'
-									onClick={() => setOpen(false)}
-									className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md font-medium'
-								>
-									Percentages
-								</Link>
-								<Link
-									to='/expenses'
-									onClick={() => setOpen(false)}
-									className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md font-medium'
-								>
-									Usages
-								</Link>
-								<Link
-									to='/total'
-									onClick={() => setOpen(false)}
-									className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md font-medium'
-								>
-									Total
-								</Link>
-     
-							</div>
-                   <div className=' text-white font-medium hover:text-red-500 cursor-pointer absolute bottom-0' onClick={() => console.log('Logout')}>
-    <span className='flex gap-2 mb-2'><div className='mt-0.5'><BsArrowLeft/></div>Log Out</span>
-  </div>
-						</Drawer>
-            
-					</>
-				)}
+    if (isAuthenticated && unprotected.includes(currentPath)) {
+      navigate({ to: '/' });
+    }
+  }, [isAuthenticated, navigate]);
 
-				{/* Main content area - with left margin to account for fixed sidebar */}
-				<div className='flex-1 md:ml-[240px]  mt-14 md:mt-6'>
-					{/* Mobile top spacing to account for floating menu button */}
-					<div className='px-4 sm:px-6 lg:px-8 pb-5 pt-1'>
-						<ScrollToTop>
-							<Outlet />
-						</ScrollToTop>
-					</div>
-				</div>
-			</div>
-		</>
-	);
+  const handleLogout = () => {
+    localStorage.removeItem('logged');
+    navigate({ to: '/login' });
+  };
+
+  // Show auth routes only (login/signup, etc.)
+  if (!isAuthenticated) return <Outlet />;
+
+  // Show 3 sec splash loader after login
+  if (loadingAfterLogin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-secondary text-white">
+        <Loader color="white" size="lg" />
+        <span className="ml-3 text-lg">Loading your dashboard...</span>
+      </div>
+    );
+  }
+
+  // Sidebar links
+  const NavLinks = ({ onClick }: { onClick?: () => void }) => (
+    <>
+      <Link
+        to="/"
+        onClick={onClick}
+        className="[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium"
+      >
+        Dashboard
+      </Link>
+      <Link
+        to="/job-information"
+        onClick={onClick}
+        className="text-white [&.active]:bg-primary  [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md font-medium"
+      >
+        Job Information
+      </Link>
+      <Link
+        to="/percentages"
+        onClick={onClick}
+        className="[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium"
+      >
+        Percentages
+      </Link>
+      <Link
+        to="/expenses"
+        onClick={onClick}
+        className="[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium"
+      >
+        Expenses
+      </Link>
+      <Link
+        to="/total"
+        onClick={onClick}
+        className="[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium"
+      >
+        Total
+      </Link>
+    </>
+  );
+
+  // Authenticated dashboard layout
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar for larger screens */}
+      <div className="hidden md:flex flex-col fixed top-0 left-0 h-screen w-[240px] bg-secondary border-r border-gray-200 z-30">
+        <div className="p-4 border-b border-gray-300/20">
+          <div className="text-2xl font-semibold text-white">My Finance App</div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4">
+          <nav className="flex flex-col gap-3">
+            <NavLinks />
+          </nav>
+        </div>
+
+        <div
+          className="p-4 text-white font-medium cursor-pointer hover:text-red-500"
+          onClick={handleLogout}
+        >
+          <span className="flex gap-2">
+            <BsArrowLeft className="mt-0.5" /> Log Out
+          </span>
+        </div>
+      </div>
+
+      {/* Mobile menu button + drawer */}
+      {isSmallScreen && (
+        <>
+          <div className="fixed top-4 left-4 z-50 md:hidden">
+            <Button
+              onClick={() => setOpen(true)}
+              className="!w-fit !p-2 !bg-secondary hover:!bg-secondary/50 transition-all duration-200 shadow-lg"
+            >
+              <IconMenu2 />
+            </Button>
+          </div>
+
+          <Drawer
+            offset={6}
+            radius="none"
+            position="left"
+            opened={open}
+            onClose={() => setOpen(false)}
+            size="280px"
+            styles={{
+              content: { backgroundColor: '#513f32' },
+              header: { backgroundColor: '#513f32', color: 'white', fontSize: 30 },
+              title: { color: 'white', fontSize: 28, fontWeight: 600 },
+              close: { color: 'white', backgroundColor: 'inherit', marginTop: 5 },
+            }}
+            title="My Finance App"
+          >
+            <div className="mt-5 flex flex-col gap-4 text-white/90">
+              <NavLinks onClick={() => setOpen(false)} />
+            </div>
+            <div
+              className="text-white font-medium hover:text-red-500 cursor-pointer absolute bottom-0 mb-3"
+              onClick={handleLogout}
+            >
+              <span className="flex gap-2">
+                <BsArrowLeft className="mt-0.5" /> Log Out
+              </span>
+            </div>
+          </Drawer>
+        </>
+      )}
+
+      {/* Main content */}
+      <div className="flex-1 md:ml-[240px] mt-14 md:mt-6">
+        <div className="px-4 sm:px-6 lg:px-8 pb-5 pt-1">
+          <ScrollToTop>
+            <Outlet />
+          </ScrollToTop>
+        </div>
+      </div>
+    </div>
+  );
 }

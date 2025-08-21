@@ -18,6 +18,8 @@ export const signUp = async (data : SignUp) => {
 
 }
 
+
+
 export const login = async (data : Login) => {
     try { 
         const response = await axios.post(`${baseUrl}${authEndPoints.login}`, data);
