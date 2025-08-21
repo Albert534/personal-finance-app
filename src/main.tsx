@@ -1,39 +1,37 @@
-import { StrictMode } from 'react'
-import ReactDOM from 'react-dom/client'
+import { StrictMode } from 'react';
+import ReactDOM from 'react-dom/client';
 import '@mantine/core/styles.css';
-
+import './apis/interceptor.ts';
 import { MantineProvider } from '@mantine/core';
-import { RouterProvider, createRouter } from '@tanstack/react-router'
-import './index.css'
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+import './index.css';
 // Import the generated route tree
-import { routeTree } from './routeTree.gen'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import { routeTree } from './routeTree.gen';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 // Create a new router instance
-const router = createRouter({ routeTree })
+const router = createRouter({ routeTree });
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router
-  }
+	interface Register {
+		router: typeof router;
+	}
 }
 
 // Render the app
-const rootElement = document.getElementById('root')!
-const queryClient = new QueryClient()
+const rootElement = document.getElementById('root')!;
+const queryClient = new QueryClient();
 if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
-  root.render(
-    <StrictMode>
-     <MantineProvider>
-      <Toaster/>
-      <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      </QueryClientProvider>
-      
-      </MantineProvider>
-
-    </StrictMode>,
-  )
+	const root = ReactDOM.createRoot(rootElement);
+	root.render(
+		<StrictMode>
+			<MantineProvider>
+				<Toaster />
+				<QueryClientProvider client={queryClient}>
+					<RouterProvider router={router} />
+				</QueryClientProvider>
+			</MantineProvider>
+		</StrictMode>
+	);
 }

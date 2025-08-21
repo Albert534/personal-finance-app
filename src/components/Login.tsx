@@ -9,10 +9,10 @@ import { useAuthenticationStore } from '../store/authenticationStore';
 import { useRouter } from '@tanstack/react-router';
 const Login = () => {
 	const router = useRouter();
-	const {setAuthenticated , authenticated} = useAuthenticationStore();
-console.log(authenticated);
+	const { setAuthenticated, authenticated } = useAuthenticationStore();
+	console.log(authenticated);
 	const [isEyeOpen, setIsEyeOpen] = useState(false);
-	const {mutate : login , isPending , isSuccess , data} = useLogin(); 
+	const { mutate: login, isPending, isSuccess, data } = useLogin();
 	console.log(data);
 	const form = useForm({
 		mode: 'uncontrolled',
@@ -26,21 +26,29 @@ console.log(authenticated);
 		},
 	});
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-	event.preventDefault();
-	form.onSubmit((values) => {
-		login(values);
-	})();
-};
+		event.preventDefault();
+		form.onSubmit((values) => {
+			login(values);
+		})();
+	};
 
-useEffect(() => {
-	if(isSuccess){
-		setAuthenticated(true);
-		document.cookie = `accessToken=${data?.tokens.accessToken}; Path=/;`;
-document.cookie = `refreshToken=${data?.tokens.refreshToken}; Path=/;`;
-		router.navigate({to: '/'});
-	}
-}, [ isSuccess, router, setAuthenticated]);
+	useEffect(() => {
+		if (isSuccess) {
+			setAuthenticated(true);
 
+			// For local development (HTTP)
+			const isProduction = window.location.protocol === 'https:';
+			const cookieOptions =
+				isProduction ?
+					'; Path=/; SameSite=None; Secure'
+				:	'; Path=/; SameSite=Lax';
+
+			document.cookie = `accessToken=${data?.tokens.accessToken}${cookieOptions}`;
+			document.cookie = `refreshToken=${data?.tokens.refreshToken}${cookieOptions}`;
+
+			router.navigate({ to: '/' });
+		}
+	}, [isSuccess, router, setAuthenticated]);
 
 	return (
 		<div className='min-h-screen flex items-center justify-center font-text-display'>
@@ -92,18 +100,20 @@ document.cookie = `refreshToken=${data?.tokens.refreshToken}; Path=/;`;
 						</div>
 
 						<div className='flex items-center justify-center mt-6'>
-							
-								 <Button
-									type='submit'
-									className='!bg-secondary hover:!bg-secondary/50 transition-all duration-200 ease-in-out flex items-center justify-center'
-									disabled={isPending} // disable button while loading
-								  >
-									{isPending ? (
-									  <Loader color="#f5e6d3" size={15} className='mr-2'  />
-									) : null}
-									Login
-								  </Button>
-							
+							<Button
+								type='submit'
+								className='!bg-secondary hover:!bg-secondary/50 transition-all duration-200 ease-in-out flex items-center justify-center'
+								disabled={isPending} // disable button while loading
+							>
+								{isPending ?
+									<Loader
+										color='#f5e6d3'
+										size={15}
+										className='mr-2'
+									/>
+								:	null}
+								Login
+							</Button>
 						</div>
 					</form>
 				</div>

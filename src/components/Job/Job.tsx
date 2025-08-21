@@ -5,8 +5,13 @@ import { BsPencil } from 'react-icons/bs';
 import { useState } from 'react';
 import AddJobModal from './AddJob';
 import EditModal from './EditModal';
+import { useUserStore } from '../../store/userStore';
 const Job = () => {
+	const user = useUserStore((state) => state.user);
+
+	console.log(user);
 	const [isAddModal, setIsModal] = useState(false);
+
 	const [isEditModal, setIsEditModal] = useState(false);
 	const [id, setId] = useState(0);
 	const jobs = [
@@ -33,20 +38,20 @@ const Job = () => {
 				}}
 				styles='!bg-secondary hover:!bg-secondary/80 transition-all duration-200 !text-md'
 			/>
-			<div className='grid grid-cols-2 gap-12'>
+			<div className='grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-12'>
 				{jobs.map((job, index) => (
 					<>
 						<div
-							className='card mt-10'
+							className='card mt-10 h-full flex flex-col'
 							key={index}
 						>
 							<div className='flex justify-between'>
 								{' '}
-								<div className='text-xl font-semibold mt-2'>
+								<div className='text-lg lg:text-xl font-semibold mt-2 '>
 									Job Title: {job.name}
 								</div>
 								<div
-									className='text-lg font-semibold mt-2 cursor-pointer'
+									className='text-md md:text-lg font-semibold mt-2 cursor-pointer'
 									onClick={() => {
 										setIsEditModal(true);
 										setId(index);
