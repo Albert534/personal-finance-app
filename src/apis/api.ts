@@ -23,3 +23,15 @@ export const forgetPasswordEndPoints = {
 export const meEndPoints = {
 	me: '/me',
 };
+
+export const jobEndPoints = {
+	addJob: '/job/create',
+	getJob: '/job/allJobs',
+	editJob: '/job/editJob',
+	deleteJob: '/job/deleteJob',
+	singleJob: '/job/singleJob',
+};
+
+export const salaryEndPoints = {
+	getSalary: '/salary/getSalary',
+};

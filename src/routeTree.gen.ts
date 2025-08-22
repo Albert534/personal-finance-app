@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TotalRouteImport } from './routes/total'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SalariesRouteImport } from './routes/salaries'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PercentagesIndexRouteImport } from './routes/percentages/index'
@@ -53,6 +54,11 @@ const TotalRoute = TotalRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalariesRoute = SalariesRouteImport.update({
+  id: '/salaries',
+  path: '/salaries',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -99,6 +105,7 @@ const ExpensesAddExpensesRoute = ExpensesAddExpensesRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/salaries': typeof SalariesRoute
   '/signup': typeof SignupRoute
   '/total': typeof TotalRoute
   '/change_password': typeof Change_passwordLazyRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/salaries': typeof SalariesRoute
   '/signup': typeof SignupRoute
   '/total': typeof TotalRoute
   '/change_password': typeof Change_passwordLazyRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/salaries': typeof SalariesRoute
   '/signup': typeof SignupRoute
   '/total': typeof TotalRoute
   '/change_password': typeof Change_passwordLazyRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/salaries'
     | '/signup'
     | '/total'
     | '/change_password'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/salaries'
     | '/signup'
     | '/total'
     | '/change_password'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/login'
+    | '/salaries'
     | '/signup'
     | '/total'
     | '/change_password'
@@ -193,6 +205,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
+  SalariesRoute: typeof SalariesRoute
   SignupRoute: typeof SignupRoute
   TotalRoute: typeof TotalRoute
   Change_passwordLazyRoute: typeof Change_passwordLazyRoute
@@ -241,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/salaries': {
+      id: '/salaries'
+      path: '/salaries'
+      fullPath: '/salaries'
+      preLoaderRoute: typeof SalariesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -305,6 +325,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
+  SalariesRoute: SalariesRoute,
   SignupRoute: SignupRoute,
   TotalRoute: TotalRoute,
   Change_passwordLazyRoute: Change_passwordLazyRoute,
