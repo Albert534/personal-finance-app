@@ -135,6 +135,13 @@ function RootComponent() {
 			>
 				Total
 			</Link>
+			<Link
+				to='/salaries'
+				onClick={onClick}
+				className='[&.active]:bg-primary [&.active]:text-black transition-all duration-200 hover:bg-secondary/50 p-3 rounded-md text-white font-medium'
+			>
+			  Salaries
+			</Link>
 		</>
 	);
 

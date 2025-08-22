@@ -7,6 +7,7 @@ export interface JobData {
   title: string;
   salary: string;
   experiences: string;
+  isMonthly: boolean;
   status: string;
 }
 export const useAddJob = () => { 

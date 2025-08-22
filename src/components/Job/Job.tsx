@@ -9,6 +9,7 @@ import { useUserStore } from '../../store/userStore';
 import { useGetAllJob } from '../../apis/query/jobQuery';
 import type { JobData } from '../../apis/mutation/jobMutation';
 import DeleteJobModal from './DeleteModal';
+import cn from '../../utils/cn';
 const Job = () => {
 	const user = useUserStore((state) => state.user);
 
@@ -38,7 +39,13 @@ const handleDeleteJob = (id: number , title: string) => {
 				}}
 				styles='!bg-secondary hover:!bg-secondary/80 transition-all duration-200 !text-md'
 			/>
+			{jobs && jobs.length === 0 && (
+					<div className='flex justify-center text-gray-400 items-center text-center text-2xl font-semibold mt-10'>
+						No Current Job Assigned
+					</div>
+				)}
 			<div className='grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-12 pb-10'>
+				
 				{jobs && jobs.map((job, index) => (
 					<>
 						<div
@@ -83,6 +90,18 @@ const handleDeleteJob = (id: number , title: string) => {
 									</div>
 								</div>
 							</div>
+
+							<div className='text-md mt-4'>
+								<div className=''>
+									<div>
+										Monthly Income :{' '}
+										<span className={cn('bg-green-700 rounded-md text-white px-2 py-2 ml-2' , job.isMonthly == false && 'bg-red-700')}>
+									{job.isMonthly ? 'Yes' : 'No'}
+										</span>
+									</div>
+								</div>
+							</div>
+
 						</div>
 					</>
 				))}

@@ -18,11 +18,12 @@ const AddJobModal = ({
 			salary: '',
 			experience: '',
 			status: '',
+			isMonthly:'',
 		},
 		validate: {
 			name: (value) =>
 				value.length < 3 ? 'Name should have at least 2 letters' : null,
-
+		
 			experience: (value) =>
 				value.length === 0 ? 'Experience is required' : null,
 			status: (value) => (value.length === 0 ? 'Status is required' : null),
@@ -45,9 +46,11 @@ const AddJobModal = ({
 		event.preventDefault();
 		form.onSubmit((values) => {
 			const data = {
+				
 				title: values.name,
 				salary: values.salary,
 				experiences: values.experience,
+				isMonthly: values.isMonthly == 'Yes' ? true : false,
 				status: values.status,
 			}
 			addJob(data);
@@ -78,7 +81,7 @@ const AddJobModal = ({
 							label='Salary'
 							required
 						>
-							<Input className='' defaultValue={0} key={form.key('salary')} {...form.getInputProps('salary')}></Input>
+							<Input type='number' className='' defaultValue={0} key={form.key('salary')} {...form.getInputProps('salary')}></Input>
 						</InputWrapper>
 					</div>
 
@@ -103,6 +106,17 @@ const AddJobModal = ({
 								className=''
 								key={form.key('status')}
 								{...form.getInputProps('status')}
+							></Select>
+						</InputWrapper>
+						<InputWrapper
+							label='Monthly Salary'
+							required
+						>
+							<Select
+								data={['Yes', 'No']}
+								className=''
+								key={form.key('isMonthly')}
+								{...form.getInputProps('isMonthly')}
 							></Select>
 						</InputWrapper>
 					</div>

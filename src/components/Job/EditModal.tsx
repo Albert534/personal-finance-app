@@ -21,6 +21,7 @@ const EditModal = ({
       salary: '',
       experiences: '',
       status: '',
+	  isMonthly: '',
     },
     validate: {
       title: (value) =>
@@ -30,6 +31,8 @@ const EditModal = ({
       experiences: (value) =>
         value.length === 0 ? 'Experience is required' : null,
       status: (value) => (value.length === 0 ? 'Status is required' : null),
+
+	  isMonthly: (value) => (value.length === 0 ? 'Status is required' : null),
     },
   });
 
@@ -50,6 +53,7 @@ const EditModal = ({
       salary: form.values.salary,
       experiences: form.values.experiences,
       status: form.values.status,
+	  isMonthly: form.values.isMonthly == 'Yes' ? true : false
     };
     
     editJob(jobData);
@@ -82,6 +86,7 @@ const EditModal = ({
         salary: data[0].salary?.toString() || '',
         experiences: data[0].experiences || '',
         status: data[0].status || '',
+		isMonthly: data[0].isMonthly ? 'Yes' : 'No',
       });
     }
   }, [data]);
@@ -124,6 +129,15 @@ const EditModal = ({
               data={['Active', 'Inactive']} 
               {...form.getInputProps('status')} 
               key={form.key('status')}
+            />
+          </InputWrapper>
+
+		   <InputWrapper label="Monthly Income" required error={form.errors.status}>
+            <Select 
+              data={['Yes', 'No']} 
+			  clearable = {false}
+              {...form.getInputProps('isMonthly')} 
+              key={form.key('isMonthly')}
             />
           </InputWrapper>
         </div>
