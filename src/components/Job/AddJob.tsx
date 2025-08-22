@@ -27,16 +27,16 @@ const AddJobModal = ({
 	});
 	const experiences = [
 		'Half Year',
-		'1 Year',
-		'2 Years',
-		'3 Years',
-		'4 Years',
-		'5 Years',
-		'6 Years',
-		'7 Years',
-		'8 Years',
-		'9 Years',
-		'10+ Years',
+		'1 year',
+		'2 years',
+		'3 years',
+		'4 years',
+		'5 years',
+		'6 years',
+		'7 years',
+		'8 years',
+		'9 years',
+		'10+ years',
 	];
 	const handleJobSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
