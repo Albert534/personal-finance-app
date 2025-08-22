@@ -1,7 +1,8 @@
-import React from 'react';
-import { Button } from '@mantine/core';
+import React, { useEffect } from 'react';
+import { Button, ModalTitle } from '@mantine/core';
 import { InputWrapper, Modal, Input, Select } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useAddJob } from '../../apis/mutation/jobMutation';
 const AddJobModal = ({
 	opened,
 	close,
@@ -9,6 +10,8 @@ const AddJobModal = ({
 	opened: boolean;
 	close: () => void;
 }) => {
+	const {mutate: addJob , isPending , isSuccess} = useAddJob()	
+	
 	const form = useForm({
 		initialValues: {
 			name: '',
@@ -40,8 +43,22 @@ const AddJobModal = ({
 	];
 	const handleJobSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		form.onSubmit((values) => {})();
+		form.onSubmit((values) => {
+			const data = {
+				title: values.name,
+				salary: values.salary,
+				experiences: values.experience,
+				status: values.status,
+			}
+			addJob(data);
+		})();
 	};
+
+	useEffect(() => {
+		if (isSuccess) {
+			close();
+		}
+	})
 	return (
 		<>
 			<Modal
@@ -55,13 +72,13 @@ const AddJobModal = ({
 							label='Job Title'
 							required
 						>
-							<Input className=''></Input>
+							<Input className='' defaultValue={''} key={form.key('name')} {...form.getInputProps('name')} ></Input>
 						</InputWrapper>
 						<InputWrapper
 							label='Salary'
 							required
 						>
-							<Input className=''></Input>
+							<Input className='' defaultValue={0} key={form.key('salary')} {...form.getInputProps('salary')}></Input>
 						</InputWrapper>
 					</div>
 
@@ -73,6 +90,8 @@ const AddJobModal = ({
 							<Select
 								data={experiences}
 								className=''
+								key={form.key('experience')}
+								{...form.getInputProps('experience')}
 							></Select>
 						</InputWrapper>
 						<InputWrapper
@@ -82,12 +101,14 @@ const AddJobModal = ({
 							<Select
 								data={['Active', 'Inactive']}
 								className=''
+								key={form.key('status')}
+								{...form.getInputProps('status')}
 							></Select>
 						</InputWrapper>
 					</div>
 
 					<div className='mt-6 flex justify-center '>
-						<Button className='!bg-secondary hover:!bg-secondary/80 transition-all duration-200 !text-md !border-none !text-white !px-2'>
+						<Button type='submit' className='!bg-secondary hover:!bg-secondary/80 transition-all duration-200 !text-md !border-none !text-white !px-2' disabled={isPending}>
 							Add Job Information
 						</Button>
 					</div>
