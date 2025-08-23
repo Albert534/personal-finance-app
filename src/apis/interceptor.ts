@@ -24,14 +24,17 @@ function deleteCookie(name: string) {
 	console.log('🍪 COOKIE DELETED:', name);
 }
 
-function setCookie(name: string, value: string) {
+function setCookie(name: string, value: string, days = 7) {
 	const isProduction = window.location.protocol === 'https:';
 	const cookieOptions =
 		isProduction ? '; Path=/; SameSite=None; Secure' : '; Path=/; SameSite=Lax';
 
-	document.cookie = `${name}=${value}${cookieOptions}`;
-	console.log('🍪 COOKIE SET:', name, 'Production:', isProduction);
-	console.log('🍪 Cookie options:', cookieOptions);
+	// Set expiration date
+	const expires = new Date();
+	expires.setDate(expires.getDate() + days);
+
+	document.cookie = `${name}=${value}; Expires=${expires.toUTCString()}${cookieOptions}`;
+	console.log('🍪 COOKIE SET:', name, 'Expires:', expires.toUTCString());
 }
 
 // Debug function to log all cookies
@@ -189,9 +192,7 @@ axiosInstance.interceptors.response.use(
 
 				// Clear default authorization header
 				delete axiosInstance.defaults.headers.common['Authorization'];
-				console.log('🧹 Cleared default Authorization header');
 
-				console.log('🚪 Redirecting to login...');
 				window.location.href = '/login';
 
 				return Promise.reject(refreshError);

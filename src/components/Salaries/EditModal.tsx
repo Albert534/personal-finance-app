@@ -1,28 +1,24 @@
 import React, { useEffect } from 'react';
 import { Modal } from '@mantine/core';
-
+import { useUserDetailMutation } from '../../apis/mutation/userDetailMutation';
 import { useCreateSalary } from '../../apis/mutation/salaryMutation';
 
-const ClaimModal = ({
+const EditModal = ({
 	opened,
 	close,
-	id,
+
+	salary,
 	title,
 }: {
 	opened: boolean;
 	close: () => void;
-	id: number;
+	salary: number;
 	title: string;
 }) => {
-	const {
-		mutate: createSalary,
-		isPending,
-		isSuccess,
-		isError,
-	} = useCreateSalary();
+	const { mutate: editBalance, isPending } = useUserDetailMutation();
 
-	const handleClaimSalary = (id: number) => {
-		createSalary(id);
+	const handleClaimSalary = (salary: number) => {
+		editBalance(salary);
 	};
 	useEffect(() => {
 		if (isPending) {
@@ -37,21 +33,20 @@ const ClaimModal = ({
 			title={<div className='text-lg font-semibold mt-1'>Claim Salary?</div>}
 		>
 			<div>
-				You are about to claim salary from{' '}
-				<span className='font-bold'>{title}</span> job. After claiming this job
-				, the claim will cooldown for a month. (Cooldown will only happen if
-				that is a monthly income.)
+				You are about to change your balance After changing this you will not be
+				able to undo this action and all of the ratios and percentages outcome
+				will change
 			</div>
 
 			<button
 				disabled={isPending}
 				className='flex justify-center mt-5 mx-auto text-center cursor-pointer hover:bg-green-400 transition-all duration-300 ease-in-out w-1/3 bg-green-600 text-white py-2 px-5 rounded-lg'
-				onClick={() => handleClaimSalary(id)}
+				onClick={() => handleClaimSalary(salary)}
 			>
-				{isPending ? 'Claiming' : 'Claim'}
+				{isPending ? 'Changing' : 'Change'}
 			</button>
 		</Modal>
 	);
 };
 
-export default ClaimModal;
+export default EditModal;

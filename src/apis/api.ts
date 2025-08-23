@@ -21,7 +21,8 @@ export const forgetPasswordEndPoints = {
 };
 
 export const meEndPoints = {
-	me: '/me',
+	me: '/me/meData',
+	user_detail: '/salary/userDetail',
 };
 
 export const jobEndPoints = {
@@ -34,4 +35,6 @@ export const jobEndPoints = {
 
 export const salaryEndPoints = {
 	getSalary: '/salary/getSalary',
+	addSalary: '/salary/addSalary',
+	editBalance: '/salary/changeBalance',
 };

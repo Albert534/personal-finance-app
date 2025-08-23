@@ -1,18 +1,40 @@
-import { Button, Select, Table, type TableData } from '@mantine/core';
-import { useState, useMemo } from 'react';
+import { Button, Select, Table, type TableData, Input } from '@mantine/core';
+import { useState, useMemo, useEffect } from 'react';
 import { Pagination } from '@mantine/core';
 import ClaimModal from './ClaimModal';
 import { useGetSalary } from '../../apis/query/salaryQuery';
+import { useUserDetailQuery } from '../../apis/query/user_detailQuery';
+import { useUserDetailMutation } from '../../apis/mutation/userDetailMutation';
+import EditModal from './EditModal';
 
 const Salaries = () => {
 	const { data = [] } = useGetSalary();
+	const { data: userData = [] } = useUserDetailQuery();
+	const { mutate: editBalance } = useUserDetailMutation();
+
+	console.log('data', userData);
+	console.log('userData', userData.total_balance);
 	console.log(data);
-	const [value, setValue] = useState<Date | null>(null);
+
+	// ✅ FIXED: Keep salary as string and initialize properly
+	const [salary, setSalary] = useState('');
+
+	// ✅ Initialize salary when userData loads
+	useEffect(() => {
+		if (userData[0]?.total_balance !== undefined) {
+			setSalary(userData[0].total_balance.toString());
+		}
+	}, [userData]);
+
+	console.log('salary', salary);
+
 	const [activePage, setPage] = useState(1);
 	const itemsPerPage = 10;
 	const [isIncreaseModal, setIsIncreaseModal] = useState(false);
-	const [isDecreaseModal, setIsDecreaseModal] = useState(false);
-	const [id, setId] = useState();
+	const [isEditModal, setIsEditModal] = useState(false);
+	const [id, setId] = useState<number>(0);
+	const [title, setTitle] = useState('');
+
 	// Generate years from 2025 onwards (next 10 years)
 	const incomingYears = [];
 	const startYear = 2025;
@@ -44,40 +66,24 @@ const Salaries = () => {
 	const currentMonth = monthsShort[currentDate.getMonth()];
 
 	// Action buttons component
-	const ActionButtons = ({ index }: { index: number }) => (
+	const ActionButtons = ({
+		index,
+		title,
+	}: {
+		index: number;
+		title: string;
+	}) => (
 		<div className='flex gap-2'>
 			<Button
 				size='xs'
 				variant='outline'
-				className='!bg-green-600 hover:!bg-green-600/60 transition-all duration-200 !text-xs !border-none !text-white !px-2'
-				onClick={() => handleEdit(index)}
+				className='!bg-green-600 hover:!bg-green-600/60 transition-all duration-200 !text-xs !border-none !text-white !px-3 text-24'
+				onClick={() => handleEdit(index, title)}
 			>
 				Claim
 			</Button>
-			<Button
-				size='xs'
-				variant='outline'
-				className='!bg-red-700 hover:!bg-red-700/60 transition-all duration-200 !text-xs !border-none !text-white !px-2'
-				onClick={() => handleDelete(index)}
-			>
-				Reduce
-			</Button>
 		</div>
 	);
-
-	// All expense data
-	const allExpensesData = [
-		['Groceries', '$120.50', 'Weekly shopping'],
-		['Groceries', '$120.50', 'Weekly shopping'],
-		['Groceries', '$120.50', 'Weekly shopping'],
-		['Groceries', '$120.50', 'Weekly shopping'],
-		['Groceries', '$120.50', 'Weekly shopping'],
-		['Groceries', '$120.50', 'Weekly shopping'],
-		['Groceries', '$120.50', 'Weekly shopping'],
-		['Groceries', '$120.50', 'Weekly shopping'],
-		['Groceries', '$120.50', 'Weekly shopping'],
-		['Groceries', '$120.50', 'Weekly shopping'],
-	];
 
 	// Calculate pagination
 	const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -92,30 +98,42 @@ const Salaries = () => {
 	// Table data for desktop
 	const tableData: TableData = {
 		head: ['Job Title', 'Amount', 'Monthly Income', 'Action'],
-		body: currentPageData.map((row, index) => [
-			row.title,
-			row.salary,
-			row.isMonthly,
+		body: currentPageData.map(
+			(
+				row: { title: string; salary: number; isMonthly: boolean; id: number },
+				index: number
+			) => [
+				row.title,
+				row.salary,
+				row.isMonthly ? 'Yes' : 'No',
 
-			<ActionButtons
-				index={startIndex + index}
-				key={startIndex + index}
-			/>,
-		]),
+				<ActionButtons
+					index={row.id}
+					key={startIndex + index}
+					title={row.title}
+				/>,
+			]
+		),
 	};
 
 	// Handle edit action
-	const handleEdit = (index: number) => {
+	const handleEdit = (index: number, title: string) => {
 		console.log('Edit item at index:', index);
 		setId(index);
 		setIsIncreaseModal(true);
+		setTitle(title);
 	};
 
-	// Handle delete action
-	const handleDelete = (index: number) => {
-		console.log('Delete item at index:', index);
-		setId(index);
-		setIsIncreaseModal(true);
+	// ✅ FIXED: Handle salary input change properly
+	const handleSalaryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const value = event.currentTarget.value;
+		setSalary(value); // Keep as string
+	};
+
+	// ✅ FIXED: Handle form submission with proper validation
+	const handleSalarySubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		setIsEditModal(true);
 	};
 
 	// Reset to page 1 when filters change
@@ -152,7 +170,10 @@ const Salaries = () => {
 			</div>
 
 			<div className='flex justify-end'>
-				<ActionButtons index={index} />
+				<ActionButtons
+					index={index}
+					title={expense[0]}
+				/>
 			</div>
 		</div>
 	);
@@ -193,6 +214,23 @@ const Salaries = () => {
 					</div>
 				</div>
 
+				{/* ✅ FIXED: Total Remaining Income Section */}
+				<div className='mb-5 flex items-center gap-2 '>
+					<span className='mb-1'>Total Remaining Income </span>
+
+					<span>
+						<form onSubmit={handleSalarySubmit}>
+							<Input
+								type='number'
+								value={salary}
+								onChange={handleSalaryChange}
+								placeholder='Enter amount'
+								className='!text-textBlack'
+							/>
+						</form>
+					</span>
+				</div>
+
 				{/* Desktop Table View */}
 				<div className='hidden md:block'>
 					<Table
@@ -215,7 +253,7 @@ const Salaries = () => {
 
 				{/* Mobile Card View */}
 				<div className='block md:hidden'>
-					{currentPageData.map((expense, index) => (
+					{currentPageData.map((expense: string[], index: number) => (
 						<ExpenseCard
 							key={startIndex + index}
 							expense={expense}
@@ -236,11 +274,23 @@ const Salaries = () => {
 					/>
 				</div>
 			</div>
+
 			{isIncreaseModal && (
 				<ClaimModal
 					id={id}
-					setIsIncreaseModal={setIsIncreaseModal}
-					title=''
+					opened={isIncreaseModal}
+					close={() => {
+						setIsIncreaseModal(false);
+					}}
+					title={title}
+				/>
+			)}
+			{isEditModal && (
+				<EditModal
+					opened={isEditModal}
+					close={() => setIsEditModal(false)}
+					salary={Number(salary)}
+					title={title}
 				/>
 			)}
 		</>
