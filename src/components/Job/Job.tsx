@@ -15,20 +15,22 @@ const Job = () => {
 
 	console.log(user);
 	const [isAddModal, setIsModal] = useState(false);
-	const [deleteModal , setDeleteModal] = useState(false);
+	const [deleteModal, setDeleteModal] = useState(false);
 	const [isEditModal, setIsEditModal] = useState(false);
 	const [id, setId] = useState(0);
-	const [title , setTitle] = useState('')
+	const [title, setTitle] = useState('');
 	const { data } = useGetAllJob();
-const jobs: JobData[] = data?.slice().sort((a: { id: number; }, b: { id: number; }) => b.id - a.id) || [];
+	const jobs: JobData[] =
+		data?.slice().sort((a: { id: number }, b: { id: number }) => b.id - a.id) ||
+		[];
 
-const handleDeleteJob = (id: number , title: string) => {
-	setId(id);
-	setDeleteModal(true);
-	setTitle(title)
-}
-	console.log('This is all job' , data)
-	
+	const handleDeleteJob = (id: number, title: string) => {
+		setId(id);
+		setDeleteModal(true);
+		setTitle(title);
+	};
+	console.log('This is all job', data);
+
 	return (
 		<>
 			<HeaderPack
@@ -40,71 +42,85 @@ const handleDeleteJob = (id: number , title: string) => {
 				styles='!bg-secondary hover:!bg-secondary/80 transition-all duration-200 !text-md'
 			/>
 			{jobs && jobs.length === 0 && (
-					<div className='flex justify-center text-gray-400 items-center text-center text-2xl font-semibold mt-10'>
-						No Current Job Assigned
-					</div>
-				)}
+				<div className='flex justify-center text-gray-400 items-center text-center text-2xl font-semibold mt-10'>
+					No Current Job Assigned
+				</div>
+			)}
 			<div className='grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-12 pb-10'>
-				
-				{jobs && jobs.map((job, index) => (
-					<>
-						<div
-							className='card !pb-0 mt-10 h-full flex flex-col'
-							key={index}
-						>
-							<div className='flex justify-between'>
-								{' '}
-								<div className='text-lg lg:text-xl font-semibold mt-2 '>
-									Job Title: {job.title}
+				{jobs &&
+					jobs.map((job, index) => (
+						<>
+							<div
+								className='card !pb-0 mt-10 h-full flex flex-col'
+								key={index}
+							>
+								<div className='flex justify-between'>
+									{' '}
+									<div className='text-lg lg:text-xl font-semibold mt-2 '>
+										Job Title: {job.title}
+									</div>
+									<div className='text-md md:text-lg font-semibold mt-2 cursor-pointer flex gap-4'>
+										<span
+											onClick={() => {
+												setIsEditModal(true);
+												setId(job.id);
+											}}
+										>
+											<BsPencil />
+										</span>{' '}
+										<div
+											className='hover:text-red-500'
+											onClick={() => handleDeleteJob(job?.id, job?.title)}
+										>
+											<BsTrash />
+										</div>
+									</div>
 								</div>
-								<div
-									className='text-md md:text-lg font-semibold mt-2 cursor-pointer flex gap-4'
-									
-								>
-									<span onClick={() => {
-										setIsEditModal(true);
-										setId(job.id);
-									}}><BsPencil /></span>{' '}
-									<div className='hover:text-red-500' onClick={() =>handleDeleteJob(job?.id , job?.title)}><BsTrash /></div>
-								
-								</div>
-								
-							</div>
 
-							<hr className='mt-1' />
-							<div className='text-lg font-semibold mt-4 flex flex-col pr-4'>
-								<div>
-									Salary: <span className='text-green-700'>{job.salary} MMK</span>
-								</div>{' '}
-								<div className='mt-2'>
-									<span>Experience: {job.experiences}</span>
-								</div>
-							</div>
-							<div className='text-md mt-4'>
-								<div className=''>
+								<hr className='mt-1' />
+								<div className='text-lg font-semibold mt-4 flex flex-col pr-4'>
 									<div>
-										Status :{' '}
-										<span className='bg-green-700 rounded-md text-white px-2 py-2 ml-2'>
-											Active
-										</span>
+										Salary:{' '}
+										<span className='text-green-700'>{job.salary} MMK</span>
+									</div>{' '}
+									<div className='mt-2'>
+										<span>Experience: {job.experiences}</span>
+									</div>
+								</div>
+								<div className='text-md mt-4'>
+									<div className=''>
+										<div>
+											Status :{' '}
+											<span
+												className={cn(
+													'bg-green-700 rounded-md text-white px-2 py-2 ml-2',
+													job.status == 'Active' ? 'bg-green-700' : 'bg-red-700'
+												)}
+											>
+												{job.status}
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div className='text-md mt-4'>
+									<div className=''>
+										<div>
+											Monthly Income :{' '}
+											<span
+												className={cn(
+													'bg-green-700 rounded-md text-white px-2 py-2 ml-2',
+													job.isMonthly == false && 'bg-red-700'
+												)}
+											>
+												{job.isMonthly ? 'Yes' : 'No'}
+											</span>
+										</div>
 									</div>
 								</div>
 							</div>
-
-							<div className='text-md mt-4'>
-								<div className=''>
-									<div>
-										Monthly Income :{' '}
-										<span className={cn('bg-green-700 rounded-md text-white px-2 py-2 ml-2' , job.isMonthly == false && 'bg-red-700')}>
-									{job.isMonthly ? 'Yes' : 'No'}
-										</span>
-									</div>
-								</div>
-							</div>
-
-						</div>
-					</>
-				))}
+						</>
+					))}
 			</div>
 			{isAddModal && (
 				<AddJobModal
@@ -125,7 +141,13 @@ const handleDeleteJob = (id: number , title: string) => {
 			)}
 
 			{deleteModal && (
-				<DeleteJobModal opened={deleteModal} close={() => setDeleteModal(false)} title={title} id={id}/>)}
+				<DeleteJobModal
+					opened={deleteModal}
+					close={() => setDeleteModal(false)}
+					title={title}
+					id={id}
+				/>
+			)}
 		</>
 	);
 };

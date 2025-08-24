@@ -8,13 +8,11 @@ import { useUserDetailMutation } from '../../apis/mutation/userDetailMutation';
 import EditModal from './EditModal';
 
 const Salaries = () => {
-	const { data = [] } = useGetSalary();
 	const { data: userData = [] } = useUserDetailQuery();
 	const { mutate: editBalance } = useUserDetailMutation();
 
 	console.log('data', userData);
 	console.log('userData', userData.total_balance);
-	console.log(data);
 
 	// ✅ FIXED: Keep salary as string and initialize properly
 	const [salary, setSalary] = useState('');
@@ -45,25 +43,10 @@ const Salaries = () => {
 	}
 
 	// 3-letter month formats
-	const monthsShort = [
-		'Jan',
-		'Feb',
-		'Mar',
-		'Apr',
-		'May',
-		'Jun',
-		'Jul',
-		'Aug',
-		'Sep',
-		'Oct',
-		'Nov',
-		'Dec',
-	];
 
 	// Get current year and month as defaults
-	const currentDate = new Date();
-	const currentYear = currentDate.getFullYear().toString();
-	const currentMonth = monthsShort[currentDate.getMonth()];
+
+	const { data = [] } = useGetSalary();
 
 	// Action buttons component
 	const ActionButtons = ({
@@ -137,9 +120,6 @@ const Salaries = () => {
 	};
 
 	// Reset to page 1 when filters change
-	const handleFilterChange = () => {
-		setPage(1);
-	};
 
 	// Mobile Card Component
 	const ExpenseCard = ({
@@ -190,27 +170,6 @@ const Salaries = () => {
 					<div className='text-xs sm:text-sm text-gray-600 order-2 sm:order-1'>
 						Showing {startIndex + 1}-{Math.min(endIndex, data.length)} of{' '}
 						{data.length} expenses
-					</div>
-
-					<div className='flex flex-col sm:flex-row gap-2 sm:gap-4 order-1 sm:order-2'>
-						<div className='flex gap-2'>
-							<Select
-								placeholder='Month'
-								defaultValue={currentMonth}
-								data={monthsShort}
-								className='flex-1'
-								onChange={handleFilterChange}
-								styles={{ dropdown: { zIndex: 9999 } }}
-							/>
-							<Select
-								placeholder='Year'
-								defaultValue={currentYear}
-								data={incomingYears}
-								className='flex-1'
-								onChange={handleFilterChange}
-								styles={{ dropdown: { zIndex: 9999 } }}
-							/>
-						</div>
 					</div>
 				</div>
 

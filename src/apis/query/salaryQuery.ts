@@ -4,6 +4,6 @@ export const useGetSalary = () => {
 	return useQuery({
 		queryKey: ['salary'],
 		queryFn: () => getSalaryFunction(),
-		retry: 5,
+		retry: 2,
 	});
 };
